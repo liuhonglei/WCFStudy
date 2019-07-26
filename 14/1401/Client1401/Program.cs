@@ -44,7 +44,7 @@ namespace Client1401
             Dictionary<string, object> parameters = new Dictionary<string, object>();
             parameters.Add("id", accountId);
             parameters.Add("amount", amount);
-            //InvokeInTransaction( () =>{  } );
+            InvokeInTransaction(() => { });
 
         }
 
@@ -55,12 +55,41 @@ namespace Client1401
             Dictionary<string, object> parameters = new Dictionary<string, object>();
             parameters.Add("id", accountId);
             parameters.Add("amount", amount);
-            //InvokeInTransaction(() => { });
+            InvokeInTransaction(() => { });
         }
 
-        private static void InvokeInTransaction(Func<object> p)
+        private static void InvokeInTransaction(Action action)
         {
-            
+            Transaction originalTransaction = Transaction.Current;
+            CommittableTransaction transaction = null;
+            DependentTransaction dependentTransaction = null;
+            if (null == Transaction.Current)
+            {
+                transaction = new CommittableTransaction();
+                Transaction.Current = transaction;
+            }
+            else {
+                dependentTransaction = Transaction.Current.DependentClone(DependentCloneOption.BlockCommitUntilComplete);
+                Transaction.Current = dependentTransaction;
+            }
+            try
+            {
+                action();
+                if (null != transaction)
+                    transaction.Commit();
+                if (null != dependentTransaction)
+                    dependentTransaction.Complete();
+            }
+            catch (Exception ex)
+            {
+                Transaction.Current.Rollback(ex);
+                throw;
+            }
+            finally {
+                Transaction transaction2 = Transaction.Current;
+                Transaction.Current = originalTransaction;
+                transaction2.Dispose();
+            }
         }
     }
 }
