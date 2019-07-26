@@ -13,6 +13,7 @@ namespace Client1401
             Console.WriteLine(new CommittableTransaction().TransactionInformation.LocalIdentifier);
             Console.WriteLine(new CommittableTransaction().TransactionInformation.LocalIdentifier);
             Console.WriteLine(new CommittableTransaction().TransactionInformation.LocalIdentifier);
+            Console.WriteLine(new CommittableTransaction().TransactionInformation.DistributedIdentifier);
 
             string acfrom = "A", acTo = "B";
             double amount = 10.00;
@@ -43,7 +44,7 @@ namespace Client1401
             Dictionary<string, object> parameters = new Dictionary<string, object>();
             parameters.Add("id", accountId);
             parameters.Add("amount", amount);
-            InvokeInTransaction( () =>{  } );
+            //InvokeInTransaction( () =>{  } );
 
         }
 
@@ -54,7 +55,7 @@ namespace Client1401
             Dictionary<string, object> parameters = new Dictionary<string, object>();
             parameters.Add("id", accountId);
             parameters.Add("amount", amount);
-            InvokeInTransaction(() => { });
+            //InvokeInTransaction(() => { });
         }
 
         private static void InvokeInTransaction(Func<object> p)
