@@ -1,0 +1,9 @@
+﻿WCF 并行模式
+wcf 与web 服务区别
+
+	web服务总是采用iis寄宿，用http传输
+	wcf采用不同的寄宿方式，并且传输协议也不限制。
+	所以 wcf服务的行为独立于寄宿的环境和传输协议，采用与asp.net 并行的模式。
+
+WCF兼容模式
+	使用AspNetCompatibilityRequirementsAttribute服务特性进行asp.net兼容部署

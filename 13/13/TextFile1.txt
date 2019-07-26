@@ -1,0 +1,31 @@
+﻿服务的元数据实际上是对它的所有的终结点的描述。
+服务消费者通过获取服务端元数据，并在此基础上重建客户端终结点，才能确保：
+
+请求消息被发送到正确的地址，
+使用一直的传输协议以实现消息的正常传输
+采用服务端期望的消息交换模式
+发送的消息具有能够识别的格式
+使用相匹配的消息编码方式，以确保服务端能够接受到消息进行正常解码
+对消息进行与服务端一致性的处理以确保对事务、可靠传输、消息安全等协议的实现。
+
+WS-MEX元数据交换
+
+
+MetadataSection
+
+元数据导出  
+	MetadataExporter  WsdlExporter 
+	IWsExportExtension WSDL导出扩展
+	IPolicyExportExtension 策略导出扩展
+
+
+元数据发布 
+	ServiceMetadataBehavior 
+	ServiceMetadataPublishingElement
+	MEX终结点
+	  契约 IMetadataExchange
+	  
+元数据获取
+元数据导入
+
+

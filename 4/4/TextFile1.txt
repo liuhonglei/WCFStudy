@@ -1,0 +1,477 @@
+﻿契约 Contract
+
+契约是一种双边或多边的协议，是利益相关方就某个问题达成的共识。契约保证了服务的正常调用，客户以契约方式调用服务
+而服务以契约规定的方式提供服务。契约是服务提供的一组操作的描述，从功能上讲，每个操作对应着某个具体的功能实现，
+以及调用这个操作的输入和输出；从消息交换层面上讲，每个操作定义了所采用的消息交换模式和消息本身的结构。
+
+元数据与服务契约
+元数据与中间代码的关系 就和 服务契约与服务实现的关系类似。
+
+WSDL XSD与服务契约
+服务契约涉及的双方就是服务提供者与服务消费者。
+Web服务具有专门的描述语言，那就是WSDL，Web Service Description Language。服务描述需要平台无关，并且一份WSDL文档具有
+契约相关的的描述信息。
+
+消息交换和服务契约
+对于每次调用服务，保证消息交换的前提是消息发送方提供的消息格式能够被接受方正常解析，所以服务契约承担的另一项任务就是
+定义消息格式，消息格式以XSD的形式定义。
+
+定义服务契约
+服务契约定义涉及ServiceContractAttribute和OperationContractAttribute，服务契约虽然通过接口、类这样的面向对象的元素重载，
+但本身却属于面向服务范畴，并不具备方法重载，类型继承这样的面向对象的特征，可以采用特定手段实现。
+ 
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface, Inherited = false, AllowMultiple = false)]
+    public sealed class ServiceContractAttribute : Attribute
+    {
+       
+        public ServiceContractAttribute();
+        public Type CallbackContract { get; set; }
+        public string ConfigurationName { get; set; }
+        public bool HasProtectionLevel { get; }
+        public string Name { get; set; }
+        
+        //     <portType> 元素的 WSDL 命名空间。 默认值为“http://tempuri.org”。
+        public string Namespace { get; set; }
+        public ProtectionLevel ProtectionLevel { get; set; }
+        public SessionMode SessionMode { get; set; }
+    }
+
+ServiceContractAttribute最好应用在接口上，按照依赖倒置的原则，实现接口和实现相互分离，鼓励基于接口的依赖，
+避免基于实现的依赖。
+
+Name 和NameSpace 
+每个服务契约都有特定名称，当接口或类应用了ServiceContractAttribute后，默认名称就是接口或类的名称。也可通过Name属性显式
+指定。服务契约命名空间，作用和C#的命名控件类似，旨在解决命名冲突。鼓励采用公司名称或项目名称作为命名空间。WCF默认采用
+
+服务契约作为WSDL的一部分以元数据的形式发布出来，WSDL通过<portType>元素对应相应的服务契约。ServiceContractAttribute的name和
+namespace对应<portType>元素的名称和空间。
+ [ServiceContract(Name = "CalculatorService", Namespace = "http://www.artech.com/")]
+    public interface ICalculator
+    {
+	
+	}
+
+	对应WSDL如下：
+	<wsdl:definitions  xmlns:i0="http://www.artech.com/" name="CalculatorService">
+		<wsdl:portType name="tns:CalculatorService">
+		</wsdl:service>
+			...
+	</wsdl:definitions>
+
+容易和ServiceBehaviorAttribute 混淆，ServiceBehaviorAttribute的Name和namespace对应wsdl:definitions节点的name和targetNamespace.
+ServiceBehaviorAttribute定义服务本身的名称和空间。
+
+Binding类同样有Name和Namespace,通过终结点bindingName 和 bindingNamespace进行设置，由于属于服务描述范畴，所以客户端终结点
+无此配置，对应WSDL下binding节点，默认情况，binding节点的命名空间为http://tempuri.org/,名称由绑定类型名称和契约名称合
+并而成。契约名称ICalculator，绑定采用BasicHttpBinding，binding节点名称为BasicHttpBinding_ICalculator.如果已经配置终结点bindingName
+ 和 bindingNamespace，则采用配置项的值。
+
+ namespace Service.Interface
+{
+	[ServiceContract(ConfigurationName="Service.Interface.ICalculator")] 
+	public interface ICalculator
+    {
+	}
+}
+ 与 
+ namespace Service.Interface
+{
+ [ServiceContract]
+ public interface ICalculator
+    {
+	}
+}
+等效。
+配置中的<endpoint contract="Service.Interface.ICalculator" /> contract就取ServiceContract中的ConfigurationName属性，
+ConfigurationName改变，配置也需要改动。
+
+其他设置
+SessionMode：该契约服务采用何种会话模式，有三种模式Allowed，Required，NowAllowed。
+HasProtectionLevel和ProtectionLevel：消息保护级别相关。
+CallBackContract：双向通信回调时，定义回调操作的接口或类的类型。
+
+
+OperationContractAttribute
+
+当一个接口/类上应用了ServiceContract后，便具有了服务契约的能力。
+但对于服务操作接口上的方法，只有显式应用了OperationContractAttribute特性后才会成为可被调用的服务操作。
+
+[AttributeUsage(AttributeTargets.Method)]
+public sealed class OperationContractAttribute : Attribute
+{
+	    // 摘要: 
+        //     初始化 System.ServiceModel.OperationContractAttribute 类的新实例。
+        public OperationContractAttribute();
+
+        // 摘要: 
+        //     获取或设置请求消息的 WS-Addressing 操作。
+        //
+        public string Action { get; set; }
+        //
+        // 摘要: 
+        //     指示操作是使用服务协定中的 Begin<methodName> 和 End<methodName> 方法对异步实现的。
+        public bool AsyncPattern { get; set; }
+        //
+        // 摘要: 
+        //     获取一个值，该值指示是否必须对此操作的消息进行加密和/或签名。
+        public bool HasProtectionLevel { get; }
+        //
+        // 摘要: 
+        //     获取或设置一个值，该值指示方法是否实现可在服务器上启动会话（如果存在会话）的操作。
+        public bool IsInitiating { get; set; }
+        //
+        // 摘要: 
+        //     获取或设置一个值，该值指示操作是否返回答复消息。
+        public bool IsOneWay { get; set; }
+        //
+        // 摘要: 
+        //     获取或设置一个值，该值指示服务操作在发送答复消息（如果存在）后，是否会导致服务器关闭会话。
+        public bool IsTerminating { get; set; }
+        //
+        // 摘要: 
+        //     获取或设置操作的名称。
+        //
+        
+        public string Name { get; set; }
+        //
+        // 摘要: 
+        //     获取或设置一个值，该值指定是否必须对操作的消息进行加密和/或签名。
+        
+        public ProtectionLevel ProtectionLevel { get; set; }
+        //
+        // 摘要: 
+        //     获取或设置用于该操作答复消息的 SOAP 操作的值。
+        
+        public string ReplyAction { get; set; }
+}
+
+OperationContractAttribute只能应用在方法上，属性成员不能成为服务契约的操作。
+
+操作名称 对应属性 Name，一下两种方式等价：
+	1	[OperationContract]
+        double Add(double x, double y);
+
+	2	[OperationContract(Name="Add)]
+        double Add(double x, double y);
+操作名称是唯一的，不允许多个操作共享一个操作名称，对于契约中的重载方法，必须通过Name属性指定不同的名称。一下两种是不合法的：
+
+1	[OperationContract(Name="Add)]        
+        double Add(double x, double y);
+
+2	[OperationContract(Name="Add)]
+		double Add(int x, int y);
+
+或者：
+1	[OperationContract]        
+        double Add(double x, double y);
+2	[OperationContract]
+		double Add(int x, int y);
+
+WSDL描述如下：
+
+<wsdl:definitions  xmlns:i0="http://www.artech.com/" name="CalculatorService">
+		<wsdl:portType name="tns:CalculatorService">
+			<wsdl:operation name="Add">
+			<wsdl:operation>
+		</wsdl:portType>
+			...
+	</wsdl:definitions>
+
+Action 和ReplyAction：控制基于某个操作的请求消息和回复消息的Action报头。<Action>是定义在WS-Addressing中辅助寻址
+的报头之一。Action 和ReplyAction有服务契约命名空间、服务契约名称及操作名称共同决定。
+Action默认值为{服务契约命名空间}/{服务契约名称}/{操作名称}
+
+namespace Service.Interface
+{
+	[ServiceContract(Name="CalcService",Namespace="http://www.lhl.com")] 
+	public interface ICalculator
+    {
+		[OperationContract(Name="Add)]        
+        double Add(double x, double y);
+	}
+}
+
+等效于：
+namespace Service.Interface
+{
+	[ServiceContract(Name="CalcService",Namespace="http://www.lhl.com")] 
+	public interface ICalculator
+    {
+		[OperationContract(Name="Add ，Action="http://www.lhl.com/CalcService/Add",
+							ReplyAction="http://www.lhl.com/CalcService/AddResponse")]        
+        double Add(double x, double y);
+	}
+}
+
+如下
+namespace Service.Interface
+{
+	[ServiceContract(Name="CalcService",Namespace="http://www.lhl.com")] 
+	public interface ICalculator
+    {
+		[OperationContract(Name="Add ，Action="http://www.lhl.com/CalcService/Add",
+							ReplyAction="http://www.lhl.com/CalcService/AddReply")]        
+        double Add(double x, double y);
+	}
+}
+在WSDL中对应如下：
+<wsdl:definitions  xmlns:i0="http://www.artech.com/" name="CalculatorService">
+		<wsdl:portType name="tns:CalculatorService">
+			<wsdl:operation name="Add">
+				<wsdl:input wsaw:Action="http://www.lhl.com/CalcService/Add" message="tns:ICalculator_Add_InputMessage"/>
+				<wsdl:output wsaw:Action="http://www.lhl.com/CalcService/AddReply" message="tns:ICalculator_Add_OutputMessage"/>
+			<wsdl:operation>
+		</wsdl:portType>
+			...
+	</wsdl:definitions>
+
+下面两段XML分别代表针对Add操作进行的请求消息和回复消息，每个SOAP都有一个Action头，他们的值与应用在Add方法上的
+OperationContract的Action和ReplyAction值一样。
+请求消息：
+<s:envoplope>
+	<s:Header>
+		<a:Action >
+			 http://www.lhl.com/CalcService/Add
+		</a:Action>
+		<a:To>
+			http://127.0.0.1:3721/CalcService
+		</a:To>
+	</s:Header>
+	<s:Body>
+		<Add>
+			<x>1</x>
+			<y>2</y>
+		</Add>
+	</s:Body>
+</s:envoplope>
+回复消息：
+<s:envoplope>
+	<s:Header>
+		<a:Action >
+			 http://www.lhl.com/CalcService/AddReply
+		</a:Action>
+	</s:Header>
+	<s:Body>
+		<AddResponse>
+			<AddResult>3</AddResult>
+		</AddResponse>
+	</s:Body>
+</s:envoplope>
+
+Action是操作的重要识别信息，进行消息筛选时，需要根据请求消息的<Action>头决定目标终结点，操作执行正确选择出目标操作。
+
+一个信道分发器具有一个到多个代表终结点的终结点分发器，通过终结点分发器的两个消息筛选器选择出用于处理当前请求的终结点分发器。
+两个消息筛选器分别为地址筛选器和契约筛选器，对应EndPointDispacher的如下两个属性。
+public class EndpointDispatcher
+{
+	public MessageFilter AddressFilter { get; set; }
+	public MessageFilter ContractFilter { get; set; }
+}
+地址筛选器根据消息报头 <To> 选择匹配的终结点地址，契约筛选器根据<Action>报头选择契约中匹配的操作。每一个操作必须
+具有唯一的Action值。
+特殊情况下，路由操作要匹配所有的入栈消息，能够处理任何消息请求的操作叫做“未匹配消息处理器”（Unmatched Message Handler）。
+对应这种操作，需通过OperationContractAttribute特性的Action设置为“*”；对回复消息进行路由，需将ReplyAction设置为“*”；
+输入参数必须为Message，输出参数必须为void 或 Message。
+对于一个服务契约来说，未匹配消息处理器只能有一个，否则WCF无法确定应该调用那个方法。
+其他属性：
+AsyncPattern:以异步模式进行的操作。
+ProtectionLevel 、HasProtectionLevel：消息级别，消息级别显式设置。
+IsInitiating、IsTerminating：会话初始化，会话终止。
+IsOneWay：服务调用采用单向消息交换模式。
+
+服务契约继承：
+ServiceContractAttribute不可以继承。
+OperationContractAttribute可以继承。
+
+[ServiceContract]
+interface IFoo{
+	[OperationContract]
+	void F1();
+}
+
+[ServiceContract]
+interface IBar: IFoo{
+
+	[OperationContract]
+	void F2();
+}
+
+定义在IFoo中的操作也会成为IBar中的操作。
+
+
+契约描述：ContractDescription
+
+public class ContractDescription{
+
+	public string Name { get; set; }
+	public string Namespace { get; set; }
+	public string ConfigurationName { get; set; }
+	public SessionMode SessionMode { get; set; }
+	public bool HasProtectionLevel { get; }
+	public Type CallbackContractType { get; set; }
+
+	public Type ContractType { get; set; }
+	public KeyedByTypeCollection<IContractBehavior> Behaviors { get; }
+	public OperationDescriptionCollection Operations { get; }
+}
+定义在ServiceContract中的属性都可以在ContractDescription中找到。除此之外，还有3个属性
+ContractType 表示服务契约的接口/类的类型。
+Behaviors包括了所有契约行为的列表。
+Operations 所有通过OperationContract定义的操作列表。
+
+OperationDescription：
+
+
+public class OperationDescription{
+	public string Name { get; }
+	public ProtectionLevel ProtectionLevel { get; set; }
+	public bool IsTerminating { get; set; }
+	public bool IsOneWay { get; }
+	public bool IsInitiating { get; set; }
+	public bool HasProtectionLevel { get; }
+	public ContractDescription DeclaringContract { get; set; }
+	public Collection<Type> KnownTypes { get; }
+}
+
+除了Action ，ReplyAction和AsyncPattern属性，其他OperationContract中的属性都可以在OperationDescription中找到。
+
+AsyncPattern为true，则需以异步模式实现操作，默认情况下是同步模式实现。
+同步模式对应如下
+public MethodInfo SyncMethod { get; set; }
+异步模式对应如下：
+public MethodInfo BeginMethod { get; set; }
+public MethodInfo EndMethod { get; set; }
+操作所在契约以属性public ContractDescription DeclaringContract { get; set; }来表示。
+而Faults属性代表的是一组异常处理的错误契约操作列表，用public FaultDescriptionCollection Faults { get; }表示。
+
+public Collection<Type> KnownTypes { get; }用于指定在序列化过程所需的已知类型，属性Behaviors包括该操作所具有的的
+所有操作行为。
+
+操作采用的两种基本消息交换模式 请求回复和单向模式通过OperationDescription的IsOneway来控制。
+public MessageDescriptionCollection Messages { get; }，包含请求消息和回复消息的描述。
+
+MessageDescription：消息描述
+参与消息交换的请求消息和回复消息通过MessageDescription类型来表示。不仅可以表示消息报头（SOAP报头），还可以表示
+消息主体的结构，还可以针对消息整体或消息的某个部分采用级别保护。
+
+public class MessageDescription{
+	public MessageDirection Direction { get; }
+	public string Action { get; internal set; }
+	public MessageHeaderDescriptionCollection Headers { get; }
+	public MessageBodyDescription Body { get; }
+	public ProtectionLevel ProtectionLevel { get; set; }
+	public bool HasProtectionLevel { get; }
+	public Type MessageType { get; set; }
+	public MessagePropertyDescriptionCollection Properties { get; }
+}
+
+Direction代表消息输入还是输出。
+请求消息Action值对应OperationContract的Action属性值
+回复消息Action值对应OperationContract的ReplyAction属性值
+ProtectionLevel 、HasProtectionLevel与消息保护有关。
+MessageType操作的输入输出使用的消息契约类型（Message Type），对于非消息契约来说，MessageType为null
+
+消息报头列表和主体对应Headers 和Body属性。
+MessageHeaderDescription属于MessagePartDescription，Index和Multiple分别表示在消息中的位次以及是否可以出现多次。
+MessagePartDescription用于描述消息契约中的某个部分。
+
+MessageBodyDescription消息主体。
+	// 摘要: 
+    //     表示 SOAP 消息的正文。
+    public class MessageBodyDescription
+    {
+        public MessageBodyDescription();
+
+        public MessagePartDescriptionCollection Parts { get; }
+       
+        [DefaultValue("")]
+        public MessagePartDescription ReturnValue { get; set; }
+        
+        [DefaultValue("")]
+        public string WrapperName { get; set; }
+        
+        [DefaultValue("")]
+        public string WrapperNamespace { get; set; }
+    }
+	Parts和ReturnValue分别表示消息的参数列表和返回值的MessagePartDescription。
+具体见demo 402.
+
+消息交换模式与服务操作：
+	三种消息交换模式，请求-回复，单向和双工。
+	请求-回复;服务操作默认采用请求-回复模式。输入参数代表请求消息的格式，返回值代表回复消息的格式。具有返回值的操作
+	肯定使用请求-回复模式。
+	definition -> portType -> operation -> input+output
+	<wsdl:message name="CalculatorService_Add_InputMessage">
+		<wsdl:part name="parameters" element="tns:Add"/>
+		</wsdl:message>
+		<wsdl:message name="CalculatorService_Add_OutputMessage">
+		<wsdl:part name="parameters" element="tns:AddResponse"/>
+	</wsdl:message>
+	<wsdl:portType name="CalculatorService">
+		<wsdl:operation name="Add">
+		<wsdl:input wsaw:Action="http://www.artech.com/CalculatorService/Add" message="tns:CalculatorService_Add_InputMessage"/>
+		<wsdl:output wsaw:Action="http://www.artech.com/CalculatorService/AddResponse" message="tns:CalculatorService_Add_OutputMessage"/>
+		</wsdl:operation>
+   </wsdl:portType>
+   操作节点wsdl:operation具有wsdl:input和wsdl:output 两个元素，意味操作会使用请求-回复模式。
+   wsdl:input和wsdl:output的message属性对应定义wsdl中的message节点名称。而表示消息组成部分的part子节点则通过属性element引用
+   的以xsd定义的xml元素来表示相应的结构，在types节点的xsd中，名称为Add和AddResponse的元素分别定义了请求消息和回复消息的结构。
+   <xs:element name="Add">
+		<xs:complexType>
+		<xs:sequence>
+		<xs:element minOccurs="0" name="x" type="xs:double"/>
+		<xs:element minOccurs="0" name="y" type="xs:double"/>
+		</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="AddResponse">
+		<xs:complexType>
+		<xs:sequence>
+		<xs:element minOccurs="0" name="AddResult" type="xs:double"/>
+		</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+	void返回值也会有回复消息。
+
+	ref 和 out ：ref参数包含在输入消息和输出消息上，而out参数只包含在输出消息上，作为操作结果返回客户端。
+	契约操作只要输入和输出的说法，输入参数做操作输入，输出参数作为操作输出，而引用参数即是操作输入也是操作输出。
+	服务操作
+
+	单向模式：不一定有相应的结果返回，甚至不一定调用成功执行，不要求服务执行后返回回复消息，并且能够容忍日志记录的暂时失败
+			这种情况下，一般采用单向的消息交换模式进行服务调用。
+
+			[ServiceContract(Namespace = "http://www.lhl.com")]
+			interface ICalculator3
+			{
+				[OperationContract( IsOneWay = true)]
+				void Add(double a, double b);
+			}
+
+	双工模式：
+			请求过程中的回调，订阅-发布
+
+			双工模式demo 403.
+			其他信息: 此操作将死锁，因为在当前邮件完成处理以前无法收到答复。如果要允许无序的邮件处理，则在 ServiceBehaviorAttribute 上指定可重输入的或多个 ConcurrencyMode。
+			解决方法:
+			  1.改变并发模式 CalculatorService 添加[ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Reentrant)]特性
+			  2 改变操作采用的消息交换模式 将契约接口 ICalculator 或 回调契约ICalculatorCallBack 或者两者 都改成单向模式？
+				只将ICalculator 或 ICalculatorCallBack设置为单向不行，必须两个全都设置为单向。
+
+			除netTcpBinding外，wsDualHttpBinding也支持双向。与tcp不同的是，通过创建两个关联的Http通道来实现。
+			使用wsDualHttpBinding，报错如下：
+			其他信息: 在消息传输完成以前关闭会话。
+			报错涉及协议 可靠会话实现的WS-RM。在本例子中，由于客户端在使用完DuplexChannelFactory后，就会释放，这会关闭会话
+			关闭会话后，服务端发送到客户端的回调请求得不到可靠消息传输的保障，因而导致异常的发生。
+			解决方法：Console.Read()
+
+	多线程、异步操作：
+			wcf异步操作：
+					异步信道调用 ：信道调用服务， 代理对象异步调用信道
+					单向消息交换 ：单向消息，一旦抵达服务端，立马返回，实现异步调用
+					异步服务实现 ：服务端在实现服务操作时，采用异步调用
+			
+			异步服务调用： APM模式BeginXXX/EndXXX， XXXAsync模式， Task模式
+			异步服务实现：
+
+	操作的选择和执行：DispatchOperation  ClientOperation

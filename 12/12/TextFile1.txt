@@ -1,0 +1,12 @@
+﻿
+MessageFault 和 Message 相互转化
+MessageFault 和 FaultException 相互转化
+
+FaultFormatter
+	DispachFaultFormatter
+	ClientFaultFormatter
+
+WCF异常处理扩展
+	ErrorHandler
+
+

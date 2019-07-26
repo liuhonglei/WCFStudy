@@ -1,0 +1,15 @@
+﻿消息：
+
+SOAP 和 WS-Addressing
+
+SOAP
+	Envelope  Body  Header
+
+WS-Addressing
+		WS-Addressing Core 提供抽象寻址机制、 
+		WS-Addressing SOAP 绑定、	WS-Addressing WSDL 绑定 将抽象机制和具体的SOAP和WSDL绑定。
+
+
+消息契约  MessageContractAttribute
+
+XML编码 

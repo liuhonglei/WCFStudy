@@ -1,0 +1,9 @@
+﻿Rest服务
+
+
+输出缓存和条件获取/更新
+	输出缓存
+		AspNetCacheProfileAttribute
+
+	条件获取
+		
