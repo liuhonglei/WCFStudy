@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.ServiceModel;
+using System.ServiceModel.Channels;
 using System.Text;
 using System.Transactions;
 
@@ -15,28 +17,63 @@ namespace Client1401
             Console.WriteLine(new CommittableTransaction().TransactionInformation.LocalIdentifier);
             Console.WriteLine(new CommittableTransaction().TransactionInformation.DistributedIdentifier);
 
-            string acfrom = "A", acTo = "B";
-            double amount = 10.00;
-            Transaction orginalTransaction = Transaction.Current;
+            //string acfrom = "A", acTo = "B";
+            //double amount = 10.00;
+            //Transaction orginalTransaction = Transaction.Current;
+            //CommittableTransaction transaction = new CommittableTransaction();
+            //try
+            //{
+            //    Transaction.Current = transaction;
+            //    Withdraw(acfrom, amount);
+            //    Deposit(acTo, amount);
+            //    transaction.Commit();
+            //}
+            //catch (Exception)
+            //{
+            //    transaction.Rollback();
+            //    throw;
+            //}
+            //finally {
+            //    Transaction.Current = orginalTransaction;
+            //    transaction.Dispose();
+            //}
+
+            PrintTransactionFlowSupport(new BasicHttpBinding());
+            PrintTransactionFlowSupport(new WSHttpBinding());
+
+            Console.ReadKey();
+        }
+
+
+        static void PrintTransactionFlowSupport(Binding binding) {
+            var element = binding.CreateBindingElements().Find<TransactionFlowBindingElement>();
+            Console.WriteLine($"{binding.GetType().Name }  { (element ==null ? "No" :"Yes" )  }");
+        }
+
+
+
+        static void Transfer(string accountFrom,string accountTo, double amount) {
+            Transaction originalTransaction = Transaction.Current;
             CommittableTransaction transaction = new CommittableTransaction();
             try
             {
                 Transaction.Current = transaction;
-                Withdraw(acfrom, amount);
-                Deposit(acTo, amount);
-                transaction.Commit();
+                Withdraw(accountFrom, amount);
+                Deposit(accountTo, amount);
+
+
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 transaction.Rollback();
+                Console.WriteLine($"错误{ ex.Message}");
                 throw;
             }
             finally {
-                Transaction.Current = orginalTransaction;
+                Transaction.Current = originalTransaction;
                 transaction.Dispose();
             }
 
-            Console.ReadKey();
         }
 
         static void Withdraw(string accountId, double amount) {
@@ -44,7 +81,7 @@ namespace Client1401
             Dictionary<string, object> parameters = new Dictionary<string, object>();
             parameters.Add("id", accountId);
             parameters.Add("amount", amount);
-            InvokeInTransaction(() => { });
+            InvokeInTransaction(() => { DbAccessUtil.ExecuteNonQuery("P_WITHDRAW", parameters); });
 
         }
 
@@ -55,7 +92,7 @@ namespace Client1401
             Dictionary<string, object> parameters = new Dictionary<string, object>();
             parameters.Add("id", accountId);
             parameters.Add("amount", amount);
-            InvokeInTransaction(() => { });
+            InvokeInTransaction(() => { DbAccessUtil.ExecuteNonQuery("P_WITHDRAW", parameters); });
         }
 
         private static void InvokeInTransaction(Action action)
@@ -90,6 +127,14 @@ namespace Client1401
                 Transaction.Current = originalTransaction;
                 transaction2.Dispose();
             }
+        }
+    }
+
+    internal class DbAccessUtil
+    {
+        internal static void ExecuteNonQuery(string v, Dictionary<string, object> parameters)
+        {
+            throw new NotImplementedException();
         }
     }
 }

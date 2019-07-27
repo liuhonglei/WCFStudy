@@ -55,4 +55,35 @@
     CAP  ：一致性  可用性  分区容错  
 			分区容错必须满足，所有智能AP或者CP。
 			zookeeper采用CP，弱一致性，分布式协调器。
-		
+			
+事务处理协议：OleTx 、 WS-AT
+	OleTx ：OleTx采用RPC作为通信手段，采用二进制消息编码，不具有跨平台特质
+	WS-AT ： 具有跨平台特质
+
+WS-AT：
+	WS-Coordination，通过一个协调器和若干协调协议定义一个可扩展的框架去协调一个分布式活动的所有参与者。
+	WS-AT和WS-BA就是两个基于WS-Coordination的协调协议。
+	1.基于协调器的协调模型
+	  协调器是协调服务的容器，按其服务作用分为三种类型
+		激活服务
+		注册服务
+		协议服务
+
+WCF事务编程
+	通过服务契约决定事务流转的策略
+	通过绑定实施事务的流转
+	通过服务/操作行为控制事务的相关行为
+
+通过服务契约决定事务流转的策略
+	TransactionFlowAttribute
+	  TransactionFlowOption： 
+			NotAllowed  默认不流转
+			Allowed  客户端事务存在，流入服务端，服务端接受
+			Mandatory 客户端必须在一个事务中进行调用，事务流入服务端，服务端接受到的消息必须包含被序列化的事务。
+
+通过绑定实施事务的流转
+	TransactionFlowBindingElement
+	TransactionProtocol : OleTx  、 WS-AT1.0、  WS-AT1.1
+	
+	
+
