@@ -85,5 +85,18 @@ WCF事务编程
 	TransactionFlowBindingElement
 	TransactionProtocol : OleTx  、 WS-AT1.0、  WS-AT1.1
 	
+通过服务/操作行为控制事务
+	事务的自动登记与提交
+	OperationBehavior中与事务相关的属性
+		TransactionAutoComplete ：如果操作过程中没有抛出异常，完成后将自动提交事务。
+		TransactionScopeRequired ： 相应的操作是否纳入到一个事务中。
+	事务相关的服务行为
+		ServiceBehavior特性定义了4个与事务相关的属性
+			TransactionIsolationLevel : 隔离级别，默认IsolationLevel.Serializable
+			TransactionTimeout: 以字符串形式定义事务超时时限
+			TransactionAutoCompleteOnSessionClose: 在会话正常结束后是否自动提交或完成开启的事务，默认false
+			ReleaseServiceInstanceOnTransactionComplete: 当事务完成之后是否需要将服务实例释放，默认false
+
+
 	
 
