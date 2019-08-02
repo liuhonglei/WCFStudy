@@ -208,6 +208,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1402", "1402", "{B54BBB75-E
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Interface1402", "14\1402\Interface1402\Interface1402.csproj", "{0564CF43-4167-470C-A5EA-50894A6CD27B}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1403", "1403", "{337FC863-16CE-418E-813D-A937D15E3D8D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client1403", "14\1403\Client1403\Client1403.csproj", "{FC1D331A-D9E3-47C6-AD6C-5A8818F55950}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -774,6 +778,14 @@ Global
 		{0564CF43-4167-470C-A5EA-50894A6CD27B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0564CF43-4167-470C-A5EA-50894A6CD27B}.Release|x86.ActiveCfg = Release|Any CPU
 		{0564CF43-4167-470C-A5EA-50894A6CD27B}.Release|x86.Build.0 = Release|Any CPU
+		{FC1D331A-D9E3-47C6-AD6C-5A8818F55950}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC1D331A-D9E3-47C6-AD6C-5A8818F55950}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC1D331A-D9E3-47C6-AD6C-5A8818F55950}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{FC1D331A-D9E3-47C6-AD6C-5A8818F55950}.Debug|x86.Build.0 = Debug|Any CPU
+		{FC1D331A-D9E3-47C6-AD6C-5A8818F55950}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC1D331A-D9E3-47C6-AD6C-5A8818F55950}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FC1D331A-D9E3-47C6-AD6C-5A8818F55950}.Release|x86.ActiveCfg = Release|Any CPU
+		{FC1D331A-D9E3-47C6-AD6C-5A8818F55950}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -862,9 +874,11 @@ Global
 		{E0CB24B4-0037-42B3-AC25-E780CD28E4CD} = {539F8BC0-3CC6-4D09-8C8E-653A3676A7E1}
 		{B54BBB75-E257-4007-AF8B-40839382F7A1} = {539F8BC0-3CC6-4D09-8C8E-653A3676A7E1}
 		{0564CF43-4167-470C-A5EA-50894A6CD27B} = {B54BBB75-E257-4007-AF8B-40839382F7A1}
+		{337FC863-16CE-418E-813D-A937D15E3D8D} = {539F8BC0-3CC6-4D09-8C8E-653A3676A7E1}
+		{FC1D331A-D9E3-47C6-AD6C-5A8818F55950} = {337FC863-16CE-418E-813D-A937D15E3D8D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		EnterpriseLibraryConfigurationToolBinariesPath = packages\Unity.2.1.505.0\lib\NET35;packages\Unity.Interception.2.1.505.0\lib\NET35;packages\EnterpriseLibrary.Common.5.0.505.0\lib\NET35;packages\EnterpriseLibrary.ExceptionHandling.5.0.505.0\lib\NET35
 		SolutionGuid = {42B6E0E4-45C4-4773-A785-2E58D304D36A}
+		EnterpriseLibraryConfigurationToolBinariesPath = packages\Unity.2.1.505.0\lib\NET35;packages\Unity.Interception.2.1.505.0\lib\NET35;packages\EnterpriseLibrary.Common.5.0.505.0\lib\NET35;packages\EnterpriseLibrary.ExceptionHandling.5.0.505.0\lib\NET35
 	EndGlobalSection
 EndGlobal

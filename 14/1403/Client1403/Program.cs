@@ -6,6 +6,7 @@ using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.Text;
 using System.Transactions;
+using System.Xml;
 
 namespace Client1403
 {
@@ -13,7 +14,25 @@ namespace Client1403
     {
         static void Main(string[] args)
         {
+            using (TransactionScope transactionScope = new TransactionScope())
+            {
+                WriteTransaction(TransactionProtocol.OleTransactions, Transaction.Current, "oletx.xml");
 
+                WriteTransaction(TransactionProtocol.WSAtomicTransactionOctober2004, Transaction.Current, "wsat10.xml");
+                WriteTransaction(TransactionProtocol.WSAtomicTransaction11, Transaction.Current, "wsat11.xml");
+            }
+
+        }
+
+        private static void WriteTransaction(TransactionProtocol transactionProtocol, Transaction transaction, string fileName)
+        {
+            string action = string.Format("http://www.lhl.com/transactionformat/{0}", transactionProtocol.GetType().Name);
+            Message message = Message.CreateMessage( MessageVersion.Default,action,Transaction.Current);
+            TransactionFormatter formatter = new TransactionFormatter(transactionProtocol);
+            formatter.WriteTransaction(Transaction.Current,message);
+            using  ( XmlWriter writer = new XmlTextWriter(fileName,Encoding.UTF8) ) {
+                message.WriteMessage(writer);
+            }
 
         }
     }
