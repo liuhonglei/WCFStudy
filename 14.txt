@@ -97,6 +97,14 @@ WCF事务编程
 			TransactionAutoCompleteOnSessionClose: 在会话正常结束后是否自动提交或完成开启的事务，默认false
 			ReleaseServiceInstanceOnTransactionComplete: 当事务完成之后是否需要将服务实例释放，默认false
 
+WCF 事务实现原理
+	TransactionFlowAttribute 行为
+	事务绑定
+	  客户端在事务信道将当前事务写入，服务端在事务信道将当前事务读出。事务读写由TransactionFormatter操作。
+	  按照协议不同，分别有OleTxTransactionFormatter WsatTransactionFormatter10   WsatTransactionFormatter11
+
+
+
 
 	
 
