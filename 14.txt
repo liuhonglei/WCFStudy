@@ -103,7 +103,20 @@ WCF 事务实现原理
 	  客户端在事务信道将当前事务写入，服务端在事务信道将当前事务读出。事务读写由TransactionFormatter操作。
 	  按照协议不同，分别有OleTxTransactionFormatter WsatTransactionFormatter10   WsatTransactionFormatter11
 
+	事务的自动登记
+	  被格式化的事务最终是作为一个消息报头的形式被传输的。服务端接受到包含流入事务的消息后，从相应报头获取将被
+	  格式化的事务，对事务进行重建，被重建的事务对象最终以消息属性的形式重新放入入栈消息。
+	  包含事务对象的消息定义在TransactionMessageProperty的对象之中。
+	  WCF运行时根据消息的action报头定位到相应的操作，如果该操作应用了OperationBehavior并将TransactionScopeRequired为Ture，
+	  1、 如果入栈消息包含事务消息属性，则提取该事务并基于该事务创建TransactionScope。该过程本质是创建流入事务的依赖事务，
+	  并将创建的依赖事务作为环境事务。
+	  2、如果入栈消息不包含事务消息属性，则创建一个新的TransactionScope，相当于创建了一个可提交事务，并把该事务作为当前的环境事务。
+	  上面的过程是在操作方法被调用前完成，并且和操作方法处于相同的线程中。
 
+	OleTx提升机制
+		OleTx是win平台下默认的分布式事务协议，采用安全rpc协议通信，并采用二进制编码。如果显示的采用ws-at协议，如果dtc发现当前
+		场景仍然能够使用OleTx进行处理，会将ws-at协议提升为OleTx协议。
+		Oletx仅仅需要事务的传播令牌。
 
 
 	
