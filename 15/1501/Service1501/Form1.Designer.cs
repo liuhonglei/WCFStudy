@@ -39,7 +39,6 @@
             this.listBox1.Name = "listBox1";
             this.listBox1.Size = new System.Drawing.Size(725, 412);
             this.listBox1.TabIndex = 0;
-            
             // 
             // Form1
             // 
@@ -48,7 +47,7 @@
             this.ClientSize = new System.Drawing.Size(800, 450);
             this.Controls.Add(this.listBox1);
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "Service";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.ResumeLayout(false);
 

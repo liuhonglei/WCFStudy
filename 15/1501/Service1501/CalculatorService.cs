@@ -8,7 +8,7 @@ using System.Threading;
 
 namespace Service1501
 {
-    [ServiceBehavior(UseSynchronizationContext = false)]
+    [ServiceBehavior(UseSynchronizationContext = false, InstanceContextMode = InstanceContextMode.PerCall)]
     public class CalculatorService : ICalculator
     {
         public double Add(double a, double b)
