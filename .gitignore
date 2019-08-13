@@ -33,7 +33,6 @@ bin/
 /.idea/.idea.CAP
 /.idea/.idea.CAP
 /.idea
-Properties
 /pack.bat
 /src/DotNetCore.CAP/project.json
 /src/DotNetCore.CAP/packages.config
