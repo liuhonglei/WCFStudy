@@ -10,3 +10,5 @@ feature1
 add no ff merge
 
 add ff merge
+
+solve bug
