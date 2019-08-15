@@ -5,3 +5,10 @@ feature1
 feature1
 
 readme
+
+add no ff merge
+
+add ff merge
+
+solve bug
+
