@@ -8,3 +8,5 @@ feature1
 feature1
 
 add no ff merge
+
+add ff merge
