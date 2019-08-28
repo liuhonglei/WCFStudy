@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Configuration;
 using System.Text;
@@ -11,7 +12,7 @@ namespace Client1601
     {
         static void Main(string[] args)
         {
-            DeliveryRequirementsAttribute
+            
         }
     }
 
