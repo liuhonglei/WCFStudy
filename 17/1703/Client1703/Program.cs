@@ -18,7 +18,7 @@ namespace Client1703
                 using (TransactionScope scope = new TransactionScope())
                 {
                     IGreeting proxy = ChannelFactory.CreateChannel();
-
+                    
                     proxy.SayHello("Foo");
                     proxy.SayGoodBye("Bar");
                     (proxy as ICommunicationObject).Close();
