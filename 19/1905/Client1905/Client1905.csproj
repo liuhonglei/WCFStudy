@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{434565AC-1DA2-477B-86AA-DC2B17DF47F7}</ProjectGuid>
+    <ProjectGuid>{FD69922A-F534-4035-8D6A-DB7DCCA54280}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>_19</RootNamespace>
-    <AssemblyName>19</AssemblyName>
+    <RootNamespace>Client1905</RootNamespace>
+    <AssemblyName>Client1905</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -33,7 +33,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.IdentityModel" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -45,8 +47,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AuthorizationCallContextInitializerBase.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ServiceAuthorizationBehaviorAttribute.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

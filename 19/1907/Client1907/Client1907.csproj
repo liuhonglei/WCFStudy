@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{434565AC-1DA2-477B-86AA-DC2B17DF47F7}</ProjectGuid>
+    <ProjectGuid>{B8E577AB-F140-42EB-B078-4DD047F8D5F1}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>_19</RootNamespace>
-    <AssemblyName>19</AssemblyName>
+    <RootNamespace>Client1907</RootNamespace>
+    <AssemblyName>Client1907</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -35,8 +35,6 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.ServiceModel" />
-    <Reference Include="System.Web" />
-    <Reference Include="System.Web.ApplicationServices" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -50,6 +48,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Interface1907\Interface1907.csproj">
+      <Project>{7dafeaef-3902-4e5d-9a5d-fd5e5cb00510}</Project>
+      <Name>Interface1907</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

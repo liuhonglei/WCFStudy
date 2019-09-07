@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
+using System.ServiceModel.Description;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -20,6 +21,7 @@ namespace Client1802
                 calculator.Add(1, 2);
                 calculator.Add(1, 2);
                 calculator.Add(1, 2);
+                ServiceAuthorizationManager
 
             }
 
