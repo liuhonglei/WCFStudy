@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
+using System.ServiceModel.Routing;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -15,6 +16,7 @@ namespace Client
     {
         static void Main(string[] args)
         {
+           RoutingConfiguration
             #region 使用客户端自己生成的引用 调用服务
             using (CalculatorServiceClient proxy = new CalculatorServiceClient()) {
                 Console.WriteLine("x + y = {2} when x ={0} and y = {1}",1,2,proxy.Add(1,2));    
